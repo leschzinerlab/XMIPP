@@ -1,0 +1,34 @@
+;This batch will convert a stack of spider images into a series of images compatible for xmipp conversion
+
+;;;;;;;;;;;;;;;;
+
+FR 
+?Input stack? <stack>
+
+RR [numParts]
+?Number of particles?
+
+FR
+?Xmipp base name? <xmipp>
+
+FR
+?Output folder name? <output>
+
+;;;;;;;;;;;;;;;;;
+
+MD
+SET MP
+(0)
+
+VM
+mkdir <output>
+
+do lb1 [part]=1,[numParts]
+
+	CP 
+	<stack>@{******[part]}
+	<output>/<xmipp>{******[part]}
+
+lb1
+
+en d

@@ -1,0 +1,31 @@
+;this batch will convert individual particle images from xmipp and make a spider stack
+
+;;;;;;;;;;;;;
+
+FR
+?Input folder with xmipp imagies? <folder>
+
+FR
+?Input base name? <base>
+
+RR [numParts]
+?Number of particles?
+
+FR
+?Output stack name? <stack>
+
+;;;;;;;;;;;;;;;
+
+MD 
+SET MP
+(0)
+
+do lb1 [part]=1,[numParts]
+
+	CP
+	<folder>/<base>******[part]
+	<stack>@{******[part]}
+
+lb1
+
+en d
