@@ -113,7 +113,7 @@ def runSpider(lines):
                print "Spider Error, check 'currentSpiderScript.spi'\n"
                sys.exit()
        # clean up
-       #os.remove(spifile)
+       os.remove(spifile)
        if os.path.isfile("LOG.spi"):
                os.remove("LOG.spi")
        resultf = glob.glob("results.spi.*")
