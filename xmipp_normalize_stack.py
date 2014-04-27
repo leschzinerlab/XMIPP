@@ -100,7 +100,7 @@ def runSpider(lines):
        spi.write("VB OFF\n")
        spi.write("MD\n")
        spi.write("SET MP\n")
-       spi.write("(0)\n")
+       spi.write("(4)\n")
        spi.write("\n")
        spi.write(lines)
 
@@ -113,13 +113,13 @@ def runSpider(lines):
                print "Spider Error, check 'currentSpiderScript.spi'\n"
                sys.exit()
        # clean up
-       os.remove(spifile)
+       #os.remove(spifile)
        if os.path.isfile("LOG.spi"):
                os.remove("LOG.spi")
        resultf = glob.glob("results.spi.*")
        if resultf:
                for f in resultf:
-                        os.remove(f)
+                       os.remove(f)
 
 #==============================
 def xmipp_normalize(params):
@@ -180,5 +180,8 @@ if __name__ == "__main__":
 	xmipp_normalize(params)
 	xmipp2spi(params)	
 	#Clean up
+	if os.path.exists('%s_xnorm.spi' %(params['stack'][:-4])) is False:
+		print 'Program crashed, exiting'
+		sys.exit()
 	cmd = 'rm -r data_temp/ data_tmp.sel'
 	subprocess.Popen(cmd,shell=True).wait()		
