@@ -14,13 +14,15 @@ import time
 #=========================
 def setupParserOptions():
         parser = optparse.OptionParser()
-        parser.set_usage("%prog -i <stack.img> --num=[num. of particles] --box=[boxsize]")
+        parser.set_usage("%prog -i <stack.img> --num=[num. of particles] --radius=[radius] --sigma=[stdDev]")
         parser.add_option("-i",dest="stack",type="string",metavar="FILE",
                 help="Particle stack in .img or .spi format")
         parser.add_option("--num",dest="numParts",type="int", metavar="INT",
                 help="Number of particles in stack")
-	parser.add_option("--box",dest="boxSize",type="int", metavar="INT",
-                help="Box size")
+	parser.add_option("--radius",dest="radius",type="int", metavar="INT",
+                help="Radius of particle for normalization (pixels)")
+	parser.add_option("--sigma",dest="sigma",type="float", metavar="FLOAT",default="3.5",
+                help="Standard deviation above which pixels are replaced by random values (default=3.5)")
 	parser.add_option("-d", action="store_true",dest="debug",default=False,
                 help="debug")
         options,args = parser.parse_args()
@@ -46,8 +48,9 @@ def checkConflicts(params):
                 sys.exit()
 	if params['stack'][-4:] != '.img':
 		if params['stack'][-4:] != '.spi':
-			print 'Stack extension %s is not recognized as .spi or .img file' %(params['stack'][-4:])
-			sys.exit()
+			if params['stack'][-4:] != '.hed':
+				print 'Stack extension %s is not recognized as .spi, .hed or .img file' %(params['stack'][-4:])
+				sys.exit()
 
 #==============================
 def getXMIPPPath():
@@ -128,7 +131,7 @@ def xmipp_normalize(params):
 	print 'Running xmipp_normalize\n'
 	print '\n'
 	
-	cmd = 'xmipp_normalize -i data_tmp.sel -method Ramp -background circle %s -remove_black_dust -remove_white_dust' %(str(params['boxSize']/2.5))
+	cmd = 'xmipp_normalize -i data_tmp.sel -method Ramp -background circle %s -remove_black_dust -thr_black_dust -%s -remove_white_dust -thr_white_dust %s' %(str(str(params['radius'])),str(params['sigma']),str(params['sigma']))
         print cmd
         subprocess.Popen(cmd,shell=True).wait()
 	
@@ -175,6 +178,10 @@ if __name__ == "__main__":
 		if params['debug'] is True:
 			print 'Imagic stack was provided'
 		convertIMGtoSPI(params)
+	if params['stack'][-4:] == '.hed':
+                if params['debug'] is True:
+                        print 'Imagic stack was provided'
+                convertIMGtoSPI(params)
 	spi2xmipp(params)
 	xmipp_selfile_create()
 	xmipp_normalize(params)
